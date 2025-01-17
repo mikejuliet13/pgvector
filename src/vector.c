@@ -547,6 +547,8 @@ halfvec_to_vector(PG_FUNCTION_ARGS)
 	PG_RETURN_POINTER(result);
 }
 
+#ifdef __powerpc64__
+
 VECTOR_TARGET_CLONES static float VectorL2SquaredDistance(int dim, float *ax,
                                                           float *bx) {
   size_t i;
@@ -580,6 +582,25 @@ VECTOR_TARGET_CLONES static float VectorL2SquaredDistance(int dim, float *ax,
   return res + vres[0] + vres[1] + vres[2] + vres[3];
 }
 
+#else
+
+VECTOR_TARGET_CLONES static float
+VectorL2SquaredDistance(int dim, float *ax, float *bx)
+{
+  float distance = 0.0;
+
+  /* Auto-vectorized */
+  for (int i = 0; i < dim; i++)
+  {
+    float diff = ax[i] - bx[i];
+    distance += diff * diff;
+  }
+
+  return distance;
+}
+
+#endif
+
 /*
  * Get the L2 distance between vectors
  */
@@ -611,6 +632,8 @@ vector_l2_squared_distance(PG_FUNCTION_ARGS)
 	PG_RETURN_FLOAT8((double) VectorL2SquaredDistance(a->dim, a->x, b->x));
 }
 
+#ifdef __powerpc64__
+
 VECTOR_TARGET_CLONES static float VectorInnerProduct(int dim, float *ax,
                                                      float *bx) {
   size_t i;
@@ -635,6 +658,22 @@ VECTOR_TARGET_CLONES static float VectorInnerProduct(int dim, float *ax,
   }
   return res + vres[0] + vres[1] + vres[2] + vres[3];
 }
+
+#else
+
+VECTOR_TARGET_CLONES static float
+VectorInnerProduct(int dim, float *ax, float *bx)
+{
+  float distance = 0.0;
+
+  /* Auto-vectorized */
+  for (int i = 0; i < dim; i++)
+    distance += ax[i] * bx[i];
+
+  return distance;
+}
+
+#endif
 
 /*
  * Get the inner product of two vectors
@@ -665,6 +704,8 @@ vector_negative_inner_product(PG_FUNCTION_ARGS)
 
 	PG_RETURN_FLOAT8((double) -VectorInnerProduct(a->dim, a->x, b->x));
 }
+
+#ifdef __powerpc64__
 
 VECTOR_TARGET_CLONES static double VectorCosineSimilarity(int dim, float *ax,
                                                           float *bx) {
@@ -700,6 +741,29 @@ VECTOR_TARGET_CLONES static double VectorCosineSimilarity(int dim, float *ax,
   }
   return dotpdt / (sqrt(mag_vx * mag_vy));
 }
+
+#else
+
+VECTOR_TARGET_CLONES static double
+VectorCosineSimilarity(int dim, float *ax, float *bx)
+{
+  float similarity = 0.0;
+  float norma = 0.0;
+  float normb = 0.0;
+
+  /* Auto-vectorized */
+  for (int i = 0; i < dim; i++)
+  {
+    similarity += ax[i] * bx[i];
+    norma += ax[i] * ax[i];
+    normb += bx[i] * bx[i];
+  }
+
+  /* Use sqrt(a * b) over sqrt(a) * sqrt(b) */
+  return (double) similarity / sqrt((double) norma * (double) normb);
+}
+
+#endif
 
 /*
  * Get the cosine distance between two vectors
