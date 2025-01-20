@@ -587,16 +587,17 @@ VECTOR_TARGET_CLONES static float VectorL2SquaredDistance(int dim, float *ax,
 VECTOR_TARGET_CLONES static float
 VectorL2SquaredDistance(int dim, float *ax, float *bx)
 {
-  float distance = 0.0;
+	float		distance = 0.0;
 
-  /* Auto-vectorized */
-  for (int i = 0; i < dim; i++)
-  {
-    float diff = ax[i] - bx[i];
-    distance += diff * diff;
-  }
+	/* Auto-vectorized */
+	for (int i = 0; i < dim; i++)
+	{
+		float		diff = ax[i] - bx[i];
 
-  return distance;
+		distance += diff * diff;
+	}
+
+	return distance;
 }
 
 #endif
@@ -664,13 +665,13 @@ VECTOR_TARGET_CLONES static float VectorInnerProduct(int dim, float *ax,
 VECTOR_TARGET_CLONES static float
 VectorInnerProduct(int dim, float *ax, float *bx)
 {
-  float distance = 0.0;
+	float		distance = 0.0;
 
-  /* Auto-vectorized */
-  for (int i = 0; i < dim; i++)
-    distance += ax[i] * bx[i];
+	/* Auto-vectorized */
+	for (int i = 0; i < dim; i++)
+		distance += ax[i] * bx[i];
 
-  return distance;
+	return distance;
 }
 
 #endif
@@ -747,20 +748,20 @@ VECTOR_TARGET_CLONES static double VectorCosineSimilarity(int dim, float *ax,
 VECTOR_TARGET_CLONES static double
 VectorCosineSimilarity(int dim, float *ax, float *bx)
 {
-  float similarity = 0.0;
-  float norma = 0.0;
-  float normb = 0.0;
+	float		similarity = 0.0;
+	float		norma = 0.0;
+	float		normb = 0.0;
 
-  /* Auto-vectorized */
-  for (int i = 0; i < dim; i++)
-  {
-    similarity += ax[i] * bx[i];
-    norma += ax[i] * ax[i];
-    normb += bx[i] * bx[i];
-  }
+	/* Auto-vectorized */
+	for (int i = 0; i < dim; i++)
+	{
+		similarity += ax[i] * bx[i];
+		norma += ax[i] * ax[i];
+		normb += bx[i] * bx[i];
+	}
 
-  /* Use sqrt(a * b) over sqrt(a) * sqrt(b) */
-  return (double) similarity / sqrt((double) norma * (double) normb);
+	/* Use sqrt(a * b) over sqrt(a) * sqrt(b) */
+	return (double) similarity / sqrt((double) norma * (double) normb);
 }
 
 #endif
