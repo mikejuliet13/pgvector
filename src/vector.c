@@ -565,7 +565,7 @@ VECTOR_TARGET_CLONES static float VectorL2SquaredDistance(int dim, float *ax,
 
   base = (dim / FLOAT_VEC_SIZE) * FLOAT_VEC_SIZE;
 
-  for (size_t i = 0; i < base; i = i + FLOAT_VEC_SIZE) {
+  for (i = 0; i < base; i = i + FLOAT_VEC_SIZE) {
     vx = (vector float *)(&ax[i]);
     vy = (vector float *)(&bx[i]);
 
@@ -646,7 +646,7 @@ VECTOR_TARGET_CLONES static float VectorInnerProduct(int dim, float *ax,
 
   base = (dim / FLOAT_VEC_SIZE) * FLOAT_VEC_SIZE;
 
-  for (size_t i = 0; i < base; i = i + FLOAT_VEC_SIZE) {
+  for (i = 0; i < base; i = i + FLOAT_VEC_SIZE) {
     vx = (vector float *)(&ax[i]);
     vy = (vector float *)(&bx[i]);
 
@@ -710,13 +710,12 @@ vector_negative_inner_product(PG_FUNCTION_ARGS)
 
 VECTOR_TARGET_CLONES static double VectorCosineSimilarity(int dim, float *ax,
                                                           float *bx) {
-  float res = 0.0, dotpdt = 0.0, mag_vx = 0.0, mag_vy = 0.0;
+  float  dotpdt = 0.0, mag_vx = 0.0, mag_vy = 0.0;
   size_t base;
   vector float *vx, *vy;
   vector float vdotpdt = {0.0, 0.0, 0.0, 0.0};
   vector float sqr_mag_vx = {0.0, 0.0, 0.0, 0.0};
   vector float sqr_mag_vy = {0.0, 0.0, 0.0, 0.0};
-  vector float vres = {0.0, 0.0, 0.0, 0.0};
 
   base = (dim / FLOAT_VEC_SIZE) * FLOAT_VEC_SIZE;
 
